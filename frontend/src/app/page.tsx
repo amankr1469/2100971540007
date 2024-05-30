@@ -4,7 +4,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from './components/Loader';
 import ProductCard from './components/ProductCard';
-// import Pagination from 'react-js-pagination';
+import Pagination from './components/Pagination';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
@@ -121,7 +121,7 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
             </fieldset>
           </div>
 
-          {/* {false && (
+          {false && (
             <div className="paginationBox">
               <Pagination
                 activePage={currentPage}
@@ -138,7 +138,7 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
                 activeLinkClass="pageLinkActive"
               />
             </div>
-          )} */}
+          )}
         </Fragment>
       )}
     </Fragment>

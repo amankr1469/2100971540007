@@ -39,32 +39,32 @@ const Pagination: React.FC<PaginationProps> = ({
     return (
         <nav>
             <ul className="pagination">
-                <li className={${itemClass} ${activePage === 1 ? 'disabled' : ''}}>
+                <li className={`${itemClass} ${activePage === 1 ? 'disabled' : ''}`}>
                     <button className={linkClass} onClick={() => onChange(1)}>
                         {firstPageText}
                     </button>
                 </li>
-                <li className={${itemClass} ${activePage === 1 ? 'disabled' : ''}}>
+                <li className={`${itemClass} ${activePage === 1 ? 'disabled' : ''}`}>
                     <button className={linkClass} onClick={() => onChange(activePage - 1)}>
                         {prevPageText}
                     </button>
                 </li>
                 {pages.map(page => (
-                    <li key={page} className={${itemClass} ${activePage === page ? activeClass : ''}}>
+                    <li key={page} className={`${itemClass} ${activePage === page ? activeClass : ''}`}>
                         <button
-                            className={${linkClass} ${activePage === page ? activeLinkClass : ''}}
+                            className={`${linkClass} ${activePage === page ? activeLinkClass : ''}`}
                             onClick={() => onChange(page)}
                         >
                             {page}
                         </button>
                     </li>
                 ))}
-                <li className={${itemClass} ${activePage === totalPages ? 'disabled' : ''}}>
+                <li className={`${itemClass} ${activePage === totalPages ? 'disabled' : ''}`}>
                     <button className={linkClass} onClick={() => onChange(activePage + 1)}>
                         {nextPageText}
                     </button>
                 </li>
-                <li className={${itemClass} ${activePage === totalPages ? 'disabled' : ''}}>
+                <li className={`${itemClass} ${activePage === totalPages ? 'disabled' : ''}`}>
                     <button className={linkClass} onClick={() => onChange(totalPages)}>
                         {lastPageText}
                     </button>
