@@ -1,13 +1,16 @@
+"use client"
+
 import Link from "next/link";
-import { Rating } from "@material-ui/lab";
+// import { Rating } from "@material-ui/lab";
 
 interface Product {
-  _id: string;
-  name: string;
-  ratings: number;
-  numOfReviews: number;
+  productId: string;
+  productName: string;
   price: number;
-  images: { url: string }[];
+  rating: number;
+  discount: number;
+  availablity: string;
+  image?: string;
 }
 
 interface ProductCardProps {
@@ -16,22 +19,19 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const options = {
-    value: product.ratings,
+    value: product.rating,
     readOnly: true,
     precision: 0.5,
   };
 
   return (
-    <Link href={`/product/${product._id}`}>
+    <Link href={`/product/${product.productId}`}>
       <a className="productCard">
-        <img src={product.images[0].url} alt={product.name} />
-        <p>{product.name}</p>
-        <div>
+        <img src={"https://picsum.photos/200"} alt={product.productName} />
+        <p>{product.productName}</p>
+        {/* <div>
           <Rating {...options} />
-          <span className="productCardSpan">
-            ({product.numOfReviews} Reviews)
-          </span>
-        </div>
+        </div> */}
         <span>{`₹${product.price}`}</span>
       </a>
     </Link>

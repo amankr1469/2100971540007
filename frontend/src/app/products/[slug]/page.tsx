@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -67,7 +69,6 @@ interface PageProps {
       <p>Rating: {product.rating}</p>
       <p>Discount: {product.discount}%</p>
       <p>Availability: {product.availability}</p>
-      {/* Add other specifications */}
     </div>
   );
 };

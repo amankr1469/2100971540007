@@ -1,10 +1,14 @@
+"use client"
+
 import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from './components/Loader';
 import ProductCard from './components/ProductCard';
-import Pagination from 'react-js-pagination';
+// import Pagination from 'react-js-pagination';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
+
+const backendURL = "http://localhost:4000";
 
 const categories = [
   'T-shirts',
@@ -17,8 +21,13 @@ const categories = [
 ];
 
 interface Product {
-  _id: string;
-  // Add other fields as needed
+  productId: string;
+  productName: string;
+  price: number;
+  rating: number;
+  discount: number;
+  availablity: string;
+  image?: string;
 }
 
 const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match }) => {
@@ -29,8 +38,6 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-
-  const keyword = match.params.keyword;
 
   const setCurrentPageNo = (e: number) => {
     setCurrentPage(e);
@@ -43,16 +50,16 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+      let link = `${backendURL}/api/v1/products?&&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
 
       if (category) {
-        link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
+        link = `${backendURL}/api/v1/products?&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
       }
 
       const { data } = await axios.get<{ products: Product[] }>(link);
       setProducts(data.products);
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.response.data.message);
       setLoading(false);
     }
@@ -72,7 +79,7 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
 
           <div className="products">
             {products &&
-              products.map((product) => <ProductCard key={product._id} product={product} />)}
+              products.map((product) => <ProductCard key={product.productId} product={product} />)}
           </div>
 
           <div className="filterBox">
@@ -113,9 +120,8 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
               />
             </fieldset>
           </div>
-          {/* Pagination */}
-          {/* Render pagination only if resultPerPage < count */}
-          {false && (
+
+          {/* {false && (
             <div className="paginationBox">
               <Pagination
                 activePage={currentPage}
@@ -132,7 +138,7 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
                 activeLinkClass="pageLinkActive"
               />
             </div>
-          )}
+          )} */}
         </Fragment>
       )}
     </Fragment>
