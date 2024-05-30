@@ -4,20 +4,17 @@ import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from './components/Loader';
 import ProductCard from './components/ProductCard';
-import Pagination from './components/Pagination';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
 const backendURL = "http://localhost:4000";
 
 const categories = [
-  'T-shirts',
-  'Jeans',
-  'Shirts',
-  'Jackets',
-  'Hoodies',
-  'Shoes',
-  'Cardigans',
+  'Fashion',
+  'Books',
+  'Toys',
+  'Beauty',
+  'Automotive',
 ];
 
 interface Product {
@@ -34,7 +31,7 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [price, setPrice] = useState<[number, number]>([0, 25000]);
   const [category, setCategory] = useState<string>('');
-  const [ratings, setRatings] = useState<number>(0);
+  const [ratings, setRatings] = useState<[number, number]>([0, 10]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -50,16 +47,16 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      let link = `${backendURL}/api/v1/products?&&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
-
+      let link = `${backendURL}/api/v1/company/AMZ/categories/Toys/products?page=${currentPage}&priceUpper=${price[1]}&priceLower=${price[0]}&ratingsUpper=${ratings[0]}&ratingsLower=${ratings[1]}`;
       if (category) {
-        link = `${backendURL}/api/v1/products?&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
+        link = `${backendURL}/api/v1/company/AMZ/categories/${category}/products?page=${currentPage}&priceLower=${price[1]}&priceUpper=${price[0]}&ratingsLower=${ratings[0]}&ratingsUpper=${ratings[1]}`;
       }
 
       const { data } = await axios.get<{ products: Product[] }>(link);
       setProducts(data.products);
       setLoading(false);
     } catch (error: any) {
+      console.log(error);
       setError(error.response.data.message);
       setLoading(false);
     }
@@ -70,78 +67,62 @@ const Products: React.FC<{ match: { params: { keyword: string } } }> = ({ match 
   }, [currentPage, price, category, ratings]);
 
   return (
-    <Fragment>
-      {loading ? (
-        <Loader />
-      ) : (
-        <Fragment>
-          <h2 className="productsHeading">Products</h2>
+    <div className="flex justify-between">
+      <div className="w-1/4 p-4">
+        <div className="mb-4">
+          <Typography>Price</Typography>
+          <Slider
+            value={price}
+            onChange={priceHandler}
+            valueLabelDisplay="auto"
+            aria-labelledby="range-slider"
+            min={0}
+            max={25000}
+          />
+        </div>
 
-          <div className="products">
-            {products &&
-              products.map((product) => <ProductCard key={product.productId} product={product} />)}
+        <div className="mb-4">
+          <Typography>Categories</Typography>
+          <ul>
+            {categories.map(cat => (
+              <li
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className="cursor-pointer"
+              >
+                {cat}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <fieldset className="mb-4">
+          <Typography component="legend">Ratings Above</Typography>
+          <Slider
+            value={ratings}
+            onChange={(event: any, newRatings: number | number[]) => {
+              setRatings(newRatings as [number, number]);
+            }}
+            aria-labelledby="range-slider"
+            valueLabelDisplay="auto"
+            min={0}
+            max={5}
+          />
+        </fieldset>
+      </div>
+
+      <div className="w-3/4 p-4">
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            {products.map(product => (
+              <ProductCard key={product.productId} product={product} />
+            ))}
           </div>
-
-          <div className="filterBox">
-            <Typography>Price</Typography>
-            <Slider
-              value={price}
-              onChange={priceHandler}
-              valueLabelDisplay="auto"
-              aria-labelledby="range-slider"
-              min={0}
-              max={25000}
-            />
-
-            <Typography>Categories</Typography>
-            <ul className="categoryBox">
-              {categories.map((category) => (
-                <li
-                  className="category-link"
-                  key={category}
-                  onClick={() => setCategory(category)}
-                >
-                  {category}
-                </li>
-              ))}
-            </ul>
-
-            <fieldset>
-              <Typography component="legend">Ratings Above</Typography>
-              <Slider
-                value={ratings}
-                onChange={(e, newRating) => {
-                  setRatings(newRating as number);
-                }}
-                aria-labelledby="continuous-slider"
-                valueLabelDisplay="auto"
-                min={0}
-                max={5}
-              />
-            </fieldset>
-          </div>
-
-          {false && (
-            <div className="paginationBox">
-              <Pagination
-                activePage={currentPage}
-                itemsCountPerPage={5} 
-                totalItemsCount={10} 
-                onChange={setCurrentPageNo}
-                nextPageText="Next"
-                prevPageText="Prev"
-                firstPageText="1st"
-                lastPageText="Last"
-                itemClass="page-item"
-                linkClass="page-link"
-                activeClass="pageItemActive"
-                activeLinkClass="pageLinkActive"
-              />
-            </div>
-          )}
-        </Fragment>
-      )}
-    </Fragment>
+        )}
+      </div>
+    </div>
   );
 };
 

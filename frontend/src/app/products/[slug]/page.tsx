@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import Loader from '../../components/Loader';
+import { useParams } from 'next/navigation';
 
 interface Product {
   name: string;
@@ -13,7 +14,7 @@ interface Product {
   rating: number;
   discount: number;
   availability: string;
-  // Add other fields as needed
+  image: string;
 }
 
 interface PageProps {
@@ -22,9 +23,11 @@ interface PageProps {
     }
   }
 
+  const backendURL = "http://localhost:4000";
+
   const ProductDetailPage: React.FC<PageProps> = ({ params }) => {
 
-    const { slug } = params;
+  const { slug } = params;
   const router = useRouter();
   const productId  = slug
   const [product, setProduct] = useState<Product | null>(null);
@@ -34,7 +37,7 @@ interface PageProps {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get<Product>(`/api/products/${productId}`);
+        const { data } = await axios.get<Product>(`${backendURL}api/v1/company/AMZ/categories/${category}/products/${productId}`);
         setProduct(data);
         setLoading(false);
       } catch (error) {
@@ -46,7 +49,7 @@ interface PageProps {
     if (productId) {
       fetchProduct();
     }
-  }, [productId]);
+  }, [productId, category]);
 
   if (loading) {
     return <Loader />;
@@ -69,6 +72,7 @@ interface PageProps {
       <p>Rating: {product.rating}</p>
       <p>Discount: {product.discount}%</p>
       <p>Availability: {product.availability}</p>
+      <img src={product.image} alt="img" />
     </div>
   );
 };
