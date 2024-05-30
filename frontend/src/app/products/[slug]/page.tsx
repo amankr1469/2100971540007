@@ -29,7 +29,8 @@ interface PageProps {
 
   const { slug } = params;
   const router = useRouter();
-  const productId  = slug
+  const productId  = slug;
+  const category = slug;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
